@@ -5,6 +5,11 @@ class PatternsController < ApplicationController
   # GET /patterns.json
   def index
     @patterns = current_user.patterns.all
+    
+    # Get suggested patterns, e.g. descriptions that all have the same category and is not yet matched by a pattern
+#    @c = current_user.verifications.count(:category, :group => 'description', :having => "count(category) = 0")
+    @c = current_user.verifications.find(:all, :select =>  'description, category',:group => 'description, category', :order => 'description')
+    @suggested = @c.reject{|v| @c.count{|x| x.description == v.description} > 1}
 
     respond_to do |format|
       format.html # index.html.erb
@@ -26,15 +31,15 @@ class PatternsController < ApplicationController
   def categorize
     if params[:pattern].nil?
       # Get next verification to categorize
-      @descriptions = Verification.minimum(:id, :group => 'description', :conditions => 'category is null')
-      @categories = Verification.minimum(:id, :group => 'category', :conditions => 'category is not null').keys
+      @descriptions = current_user.verifications.minimum(:id, :group => 'description', :conditions => 'category is null')
+      @categories = current_user.verifications.minimum(:id, :group => 'category', :conditions => 'category is not null').keys
       # Redirect to dashboard if no verifications need categorizing
       if @descriptions.length == 0
         flash[:notice] = "All verifications are categorized"
         redirect_to "/"
         return
       end
-      @verification = Verification.find(@descriptions[@descriptions.keys[0]])
+      @verification = current_user.verifications.find(@descriptions[@descriptions.keys[0]])
 
       respond_to do |format|
         format.html { render action: "categorize" }
@@ -49,7 +54,7 @@ class PatternsController < ApplicationController
         @pattern = create_and_apply_pattern(pattern, category)
       else
         # Update single verification
-        @verification = Verification.find(params["vid"])
+        @verification = current_user.verifications.find(params["vid"])
         @verification.category = category
         @verification.save
       end
@@ -68,7 +73,7 @@ class PatternsController < ApplicationController
     p.category = category
     p.save
     # Update matching verifications
-    Verification.update_all({:category => category, :pattern_id => p.id}, ["description = ?", pattern])  
+    current_user.verifications.update_all({:category => category, :pattern_id => p.id}, ["description = ?", pattern])  
     return p
   end
 
@@ -115,7 +120,7 @@ class PatternsController < ApplicationController
         words = line.split("\t")
         vid = words[0].strip
         cat = words[1].strip
-        verification = Verification.where(
+        verification = current_user.verifications.where(
         "verification_id = :verification_id",
         { :verification_id => vid }
         ).first
@@ -180,16 +185,21 @@ class PatternsController < ApplicationController
   # POST /patterns
   # POST /patterns.json
   def create
-      # Standard create
-      @pattern = current_user.patterns.create(params[:pattern])
+      # Apply suggested patterns
+      if params[:suggested]
+        render action: "index"
+      else  
+        # Standard create
+        @pattern = current_user.patterns.create(params[:pattern])
 
-      respond_to do |format|
-        if @pattern.save
-          format.html { redirect_to @pattern, notice: 'Pattern was successfully created.' }
-          format.json { render json: @pattern, status: :created, location: @pattern }
-        else
-          format.html { render action: "new" }
-          format.json { render json: @pattern.errors, status: :unprocessable_entity }
+        respond_to do |format|
+          if @pattern.save
+            format.html { redirect_to @pattern, notice: 'Pattern was successfully created.' }
+            format.json { render json: @pattern, status: :created, location: @pattern }
+          else
+            format.html { render action: "new" }
+            format.json { render json: @pattern.errors, status: :unprocessable_entity }
+          end
         end
       end
   end
