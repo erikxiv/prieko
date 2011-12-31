@@ -7,9 +7,9 @@ class VerificationsController < ApplicationController
   # GET /verifications.json
   def index
     # Get distinct options
-    @years = current_user.verifications.sum(:amount, :group => 'year').keys
+    @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year').keys
     @year = params[:year] || Date.today.year
-    @categories = current_user.verifications.sum(:amount, :group => 'category').keys
+    @categories = current_user.verifications.sum(:amount, :group => 'category', :order => 'category').keys
     @category = params[:category] || "All"
     
     # Build conditions
@@ -146,7 +146,7 @@ class VerificationsController < ApplicationController
     if params[:year]
       @year = params[:year]
     end
-    @years = current_user.verifications.sum(:amount, :group => 'year').keys
+    @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year').keys
     @report = PivotTable::PivotTable.new
     (1..12).each do |month|
       @report.add_column(month, current_user.verifications.sum(:amount, :conditions => "month=#{month} and year=#{@year}", :group => 'category'))
