@@ -159,12 +159,4 @@ class VerificationsController < ApplicationController
     end
   end
   
-  def clear
-    Verification.delete_all()
-    respond_to do |format|
-      format.html { redirect_to "/" }
-      format.json { head :ok }
-    end
-  end
-    
 end
