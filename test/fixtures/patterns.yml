@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  pattern: MyString
+  category: MyString
+  user: "one"
+
+two:
+  pattern: MyString
+  category: MyString
+  user: "one"

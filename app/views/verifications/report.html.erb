@@ -1,0 +1,31 @@
+<h1>Report</h1>
+<%= form_tag do %>
+	<select name="year" onchange='this.form.submit()'>
+		<%= options_for_select(@years, @year) %>
+	</select>
+<% end %>
+
+<table id="hor-minimalist-b">
+	<thead>
+	<tr>
+		<th>Category</th>
+		<% @report.column_headers.each do |h| %>
+		<th><%= h %></th>
+		<% end %>
+	</tr>
+	</thead>
+	<tbody>
+	<% (0..@report.height-1).each do |row_index| %>
+	<tr>
+		<td><%=@report.row_headers[row_index]%></td>
+		<% @report.data[row_index].each do |cell| %>
+		<td><%= cell ? cell.gsub(/ /, "&nbsp;").html_safe : "" %></td>
+		<% end %>
+	</tr>
+	<% end %>
+	</tbody>
+</table>
+
+<br />
+
+

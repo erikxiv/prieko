@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  email: one@mail.com
+  password: pass1
+
+two:
+  email: two@mail.com
+  password: pass2
+
+lonely:
+  email: lonely@mail.com
+  password: pass3

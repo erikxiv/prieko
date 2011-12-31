@@ -1,0 +1,21 @@
+<h1>Importera verifikationer</h1>
+
+<%= form_tag do %>
+  <% if @errors %>
+    <div id="error_explanation">
+      <h2>An error occurred</h2>
+
+      <ul>
+        <li><%= @errors %></li>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+	<textarea id="import" name="import" type="textarea" rows="10" columns="80"><%= @import %></textarea>
+  </div>
+  <div class="actions">
+    <input type="Submit"/>
+  </div>
+<% end %>
+<%= link_to 'Cancel', "/" %>

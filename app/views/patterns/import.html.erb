@@ -1,0 +1,26 @@
+<h1>Importera kategorisering</h1>
+
+Varje rad ska vara på formatet PATTERN TAB CATEGORY
+
+  <% if @bad_lines && @bad_lines.length > 0 %>
+    <div id="error_explanation">
+      <h2>The following lines does not follow the above format</h2>
+
+      <ul>
+		<% @bad_lines.each do |x| %>
+        <li><%= x %></li>
+		<% end %>
+      </ul>
+    </div>
+  <% end %>
+
+<%= form_tag do %>
+  <div class="field">
+	<textarea id="import" name="import" type="textarea" rows="10" columns="80"><%= @import %></textarea>
+  </div>
+  <div class="actions">
+	<input type="submit" value="Submit" />
+</div>
+<% end %>
+
+<%= link_to 'Cancel', "/" %>

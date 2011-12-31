@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Pattern:</b>
+  <%= @pattern.pattern %>
+</p>
+
+<p>
+  <b>Category:</b>
+  <%= @pattern.category %>
+</p>
+
+
+<%= link_to 'Edit', edit_pattern_path(@pattern) %> |
+<%= link_to 'Back', patterns_path %>

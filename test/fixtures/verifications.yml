@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  raw: MyString
+  bank: MyString
+  verification_id: MyString
+  verification_date: 2011-12-27
+  amount: 1.5
+  description: MyString
+  category: MyString
+  user: "one"
+  year: 2011
+  month: 12
+
+two:
+  raw: MyString
+  bank: MyString
+  verification_id: MyString
+  verification_date: 2011-12-27
+  amount: 1.5
+  description: MyString
+  category: MyString
+  user: "one"
+  year: 2011
+  month: 12
