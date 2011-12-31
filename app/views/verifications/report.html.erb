@@ -17,8 +17,8 @@
 	<tbody>
 	<% (0..@report.height-1).each do |row_index| %>
 	<tr>
-		<td><%=@report.row_headers[row_index]%></td>
-		<% @report.data[row_index].each do |cell| %>
+		<td><%= link_to @report.row_headers[row_index], verifications_path(:year => @year, :category => @report.row_headers[row_index]) %></td>
+		<% @report.data[row_index].each_with_index do |cell, index| %>
 		<td><%= cell ? cell.gsub(/ /, "&nbsp;").html_safe : "" %></td>
 		<% end %>
 	</tr>
