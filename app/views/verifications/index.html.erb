@@ -17,9 +17,6 @@
     <th>Description</th>
     <th>Amount</th>
     <th>Category</th>
-    <th></th>
-    <th></th>
-    <th></th>
   </tr>
 	</thead>
 
@@ -27,17 +24,10 @@
 <% @verifications.each do |verification| %>
   <tr>
     <td><%= verification.verification_date %></td>
-    <td><%= verification.description %></td>
+	<td><%= link_to verification.description.gsub(/ /, "&nbsp").html_safe, verifications_path(:year => @year, :description => verification.description) %></td>
     <td><%= verification.amount %></td>
-    <td><%= verification.category %></td>
-    <td><%= link_to 'Show', verification %></td>
-    <td><%= link_to 'Edit', edit_verification_path(verification) %></td>
-    <td><%= link_to 'Destroy', verification, confirm: 'Are you sure?', method: :delete %></td>
+	<td><%= link_to verification.category, verifications_path(:year => @year, :category => verification.category) %></td>
   </tr>
 <% end %>
 </tbody>
 </table>
-
-<br />
-
-<%= link_to 'New Verification', new_verification_path %>

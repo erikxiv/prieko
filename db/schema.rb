@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111231092152) do
+ActiveRecord::Schema.define(:version => 20111231160323) do
 
   create_table "patterns", :force => true do |t|
     t.string   "pattern"
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(:version => 20111231092152) do
     t.integer  "month"
     t.integer  "pattern_id"
     t.integer  "user_id"
+    t.float    "balance"
   end
 
 end

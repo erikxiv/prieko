@@ -7,7 +7,7 @@ class VerificationsController < ApplicationController
   # GET /verifications.json
   def index
     # Get distinct options
-    @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year').keys
+    @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
     @year = params[:year] || Date.today.year
     @categories = current_user.verifications.sum(:amount, :group => 'category', :order => 'category').keys
     @category = params[:category] || "All"
@@ -27,8 +27,12 @@ class VerificationsController < ApplicationController
         parameters[:category] = @category
       end
     end
+    if params[:description]
+        conditions += " AND description=:description"
+        parameters[:description] = params[:description]
+    end
     conditions.sub!(/^ AND/, "")
-    @verifications = current_user.verifications.where(conditions, parameters)
+    @verifications = current_user.verifications.where(conditions, parameters).order("verification_date DESC")
     @cu = current_user
 
     respond_to do |format|
