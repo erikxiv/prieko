@@ -7,8 +7,6 @@ gem 'devise'
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
-
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -32,7 +30,12 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
+group :dev do
+	gem 'sqlite3'
+end
+
 group :test do
+	gem 'sqlite3'
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false
 end
