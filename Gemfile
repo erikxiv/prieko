@@ -7,6 +7,8 @@ gem 'devise'
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
+gem 'pg'
+
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -31,16 +33,13 @@ gem 'jquery-rails'
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
 group :dev do
-	gem 'sqlite3'
 end
 
 group :test do
-	gem 'sqlite3'
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false
 end
 
 group :production do
-  gem 'pg'
   gem 'therubyracer-heroku', '0.8.1.pre3'
 end
