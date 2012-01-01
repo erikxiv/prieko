@@ -12,6 +12,8 @@
 		<% @report.column_headers.each do |h| %>
 		<th><%= h %></th>
 		<% end %>
+		<th>Total</th>
+		<th>Average</th>
 	</tr>
 	</thead>
 	<tbody>
@@ -19,8 +21,10 @@
 	<tr>
 		<td><%= link_to @report.row_headers[row_index], verifications_path(:year => @year, :category => @report.row_headers[row_index]) %></td>
 		<% @report.data[row_index].each_with_index do |cell, index| %>
-		<td><%= cell ? cell.gsub(/ /, "&nbsp;").html_safe : "" %></td>
+		<td><%= cell ? html_currency(cell) : "" %></td>
 		<% end %>
+		<td><%= html_currency(@report.sum_row(row_index)) %></td>
+		<td><%= html_currency(@report.average_row(row_index)) %></td>
 	</tr>
 	<% end %>
 	</tbody>

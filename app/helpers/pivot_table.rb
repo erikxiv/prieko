@@ -29,6 +29,14 @@ module PivotTable
       return @data
     end
     
+    def sum_row(index)
+      @data[index].map{|x| x ? x.to_f : 0}.sum
+    end
+    
+    def average_row(index)
+      @data[index].map{|x| x ? x.to_f : 0}.inject{|sum,x| sum += x} / @data[index].size
+    end
+    
     def sort_rows!
       # Create a hash of row headers and row data
       mapped = Hash.new
@@ -56,7 +64,8 @@ module PivotTable
           @row_headers.push(key)
           @data.push(Array.new(width()))
         end
-        @data[@row_headers.index(key)][-1] = number_to_currency(value, :precision => 0, :delimiter => " ", :format => "%n", :separator => ",")
+        #@data[@row_headers.index(key)][-1] = number_to_currency(value, :precision => 0, :delimiter => " ", :format => "%n", :separator => ",")
+        @data[@row_headers.index(key)][-1] = value
       end
     end
   end

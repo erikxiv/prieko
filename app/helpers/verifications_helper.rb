@@ -25,7 +25,7 @@ module VerificationsHelper
         :bank => "SEB",
         :verification_id => columns[2].strip,
         :verification_date => Date.strptime(columns[1].strip, "%Y-%m-%d"),
-        :description => columns[3].strip.upcase,
+        :description => UnicodeUtils.upcase(columns[3].strip),
         :amount => columns[4].strip.gsub(/[^0-9\-\,]/, "").gsub(/,/,".").to_f}
       # check for visa date text field
       if columns[3].strip =~ /.*\/\d\d\-\d\d\-\d\d$/
@@ -39,5 +39,9 @@ module VerificationsHelper
       end
       return sebhash
     end
+  end
+  
+  def html_currency(value)
+    number_to_currency(value, :precision => 0, :delimiter => " ", :format => "%n", :separator => ",").gsub(/ /, "&nbsp;").html_safe
   end
 end

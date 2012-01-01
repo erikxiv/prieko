@@ -32,7 +32,7 @@ class VerificationsController < ApplicationController
         parameters[:description] = params[:description]
     end
     conditions.sub!(/^ AND/, "")
-    @verifications = current_user.verifications.where(conditions, parameters).order("verification_date DESC")
+    @verifications = current_user.verifications.where(conditions, parameters).order("verification_date DESC, description")
     @cu = current_user
     
     respond_to do |format|
@@ -68,7 +68,12 @@ class VerificationsController < ApplicationController
         end
       end
       if @errors.length <= 0
+        # Get patterns
+        @patterns = current_user.patterns.all
         verifications.each do |s|
+          # Check patterns for match
+          match = @patterns.reject{|p| p.pattern != s.description}.first
+          s.category = match ? match.category : nil
           s.save
         end
       end
@@ -146,11 +151,8 @@ class VerificationsController < ApplicationController
   end
   
   def report
-    @year = Date.today.year
-    if params[:year]
-      @year = params[:year]
-    end
     @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
+    @year = params[:year] || @years.length > 0 ? @years.max.to_s : Date.today.year
     @report = PivotTable::PivotTable.new
     (1..12).each do |month|
       @report.add_column(month, current_user.verifications.sum(:amount, :conditions => "month=#{month} and year=#{@year}", :group => 'category'))

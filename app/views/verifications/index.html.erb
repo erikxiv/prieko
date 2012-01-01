@@ -25,7 +25,7 @@
     <td><%= verification.verification_date %></td>
 	<td><%= link_to verification.description.gsub(/ /, "&nbsp").html_safe, verifications_path(:year => @year, :description => verification.description) %></td>
     <td><%= verification.amount %></td>
-	<td><%= link_to verification.category, verifications_path(:year => @year, :category => verification.category) %></td>
+	<td><%= link_to verification.category ? verification.category : "Uncategorized", verifications_path(:year => @year, :category => verification.category) %></td>
   </tr>
 <% end %>
 </tbody>
