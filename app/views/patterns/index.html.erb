@@ -11,36 +11,11 @@
 
 <% @patterns.each do |pattern| %>
   <tr>
-    <td><%= pattern.pattern %></td>
-    <td><%= pattern.category %></td>
+    <td><%= link_to pattern.pattern, verifications_path(:description => pattern.pattern) %></td>
+    <td><%= link_to pattern.category, verifications_path(:category => pattern.category) %></td>
     <td><%= link_to 'Show', pattern %></td>
     <td><%= link_to 'Edit', edit_pattern_path(pattern) %></td>
     <td><%= link_to 'Destroy', pattern, confirm: 'Are you sure?', method: :delete %></td>
   </tr>
 <% end %>
 </table>
-
-
-<h1>Suggested patterns</h1>
-<%= form_tag do %>
-<table id="hor-minimalist-b">
-	<thead>
-  <tr>
-    <th><%= check_box_tag 'select_all', 1, false, :id => "select_all" %></th>
-    <th>Description</th>
-    <th>Category</th>
-  </tr>
-	</thead>
-
-<tbody>
-<% @suggested.each_with_index do |verification,index| %>
-  <tr>
-    <td><%= check_box_tag 'suggested', verification.description+"|"+verification.category, false, :class => "suggested" %></td>
-    <td><%= verification.description %></td>
-    <td><%= verification.category %></td>
-  </tr>
-<% end %>
-</tbody>
-</table>
-<%= submit_tag 'Save suggested patterns' %>
-<% end %>

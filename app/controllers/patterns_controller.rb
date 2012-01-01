@@ -4,16 +4,34 @@ class PatternsController < ApplicationController
   # GET /patterns
   # GET /patterns.json
   def index
-    @patterns = current_user.patterns.all
-    
-    # Get suggested patterns, e.g. descriptions that all have the same category and is not yet matched by a pattern
-#    @c = current_user.verifications.count(:category, :group => 'description', :having => "count(category) = 0")
-    @c = current_user.verifications.find(:all, :select =>  'description, category',:group => 'description, category', :order => 'description')
-    @suggested = @c.reject{|v| @c.count{|x| x.description == v.description} > 1}
+    @patterns = current_user.patterns.find(:all, :order => :pattern)
+    @suggested = PatternsHelper::get_suggested_patterns(current_user)
+    if @suggested.count > 0
+      flash.now[:notice] = "<a href=\"" + url_for(:action => "suggest") + "\">There are " + @suggested.count.to_s + " suggested pattern(s) for you</a>"
+    end
 
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @patterns }
+    end
+  end
+  
+  def suggest
+    if request.method == "GET"
+      @suggested = PatternsHelper::get_suggested_patterns(current_user)
+
+      respond_to do |format|
+        format.html # index.html.erb
+        format.json { render json: @patterns }
+      end
+    else
+      checked = params[:suggested] ? params[:suggested][0] : {}
+      checked.each do |idx, val|
+        x = val.split("|")
+        create_and_apply_pattern(x[0], x[1])
+      end
+      # Save suggested patterns and go back to pattern listing
+      redirect_to patterns_path
     end
   end
 

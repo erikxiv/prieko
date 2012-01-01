@@ -8,7 +8,7 @@ class VerificationsController < ApplicationController
   def index
     # Get distinct options
     @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
-    @year = params[:year] || Date.today.year
+    @year = params[:year] || @years.length > 0 ? @years.max.to_s : Date.today.year
     @categories = current_user.verifications.sum(:amount, :group => 'category', :order => 'category').keys
     @category = params[:category] || "All"
     
@@ -34,7 +34,7 @@ class VerificationsController < ApplicationController
     conditions.sub!(/^ AND/, "")
     @verifications = current_user.verifications.where(conditions, parameters).order("verification_date DESC")
     @cu = current_user
-
+    
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @verifications }
