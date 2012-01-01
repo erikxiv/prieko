@@ -71,9 +71,11 @@ class VerificationsController < ApplicationController
         # Get patterns
         @patterns = current_user.patterns.all
         verifications.each do |s|
-          # Check patterns for match
-          match = @patterns.reject{|p| p.pattern != s.description}.first
-          s.category = match ? match.category : nil
+          # Check patterns for match if no category supplied
+          if ! s.category
+            match = @patterns.reject{|p| p.pattern != s.description}.first
+            s.category = match ? match.category : nil
+          end
           s.save
         end
       end

@@ -12,8 +12,8 @@
 		<% @report.column_headers.each do |h| %>
 		<th><%= h %></th>
 		<% end %>
-		<th>Total</th>
 		<th>Average</th>
+		<th>Total</th>
 	</tr>
 	</thead>
 	<tbody>
@@ -23,8 +23,8 @@
 		<% @report.data[row_index].each_with_index do |cell, index| %>
 		<td><%= cell ? html_currency(cell) : "" %></td>
 		<% end %>
-		<td><%= html_currency(@report.sum_row(row_index)) %></td>
-		<td><%= html_currency(@report.average_row(row_index)) %></td>
+		<td><b><%= html_currency(@report.average_row(row_index)) %></b></td>
+		<td><b><%= html_currency(@report.sum_row(row_index)) %></b></td>
 	</tr>
 	<% end %>
 	</tbody>

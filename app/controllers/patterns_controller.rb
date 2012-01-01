@@ -50,7 +50,7 @@ class PatternsController < ApplicationController
     if params[:pattern].nil?
       # Get next verification to categorize
       @descriptions = current_user.verifications.minimum(:id, :group => 'description', :conditions => 'category is null')
-      @categories = current_user.verifications.minimum(:id, :group => 'category', :conditions => 'category is not null').keys
+      @categories = current_user.verifications.minimum(:id, :group => 'category', :conditions => 'category is not null', :order => :category).keys
       # Redirect to dashboard if no verifications need categorizing
       if @descriptions.length == 0
         flash[:notice] = "All verifications are categorized"
