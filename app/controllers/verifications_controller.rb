@@ -175,7 +175,8 @@ class VerificationsController < ApplicationController
   
   def report
     @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
-    @year = params[:year] || @years.length > 0 ? @years.max.to_s : Date.today.year
+    @year = params[:year] 
+    @year ||= @years.length > 0 ? @years.max.to_s : Date.today.year
     @report = PivotTable::PivotTable.new
     (1..12).each do |month|
       @report.add_column(month, current_user.verifications.sum(:amount, :conditions => "month=#{month} and year=#{@year}", :group => 'category'))
