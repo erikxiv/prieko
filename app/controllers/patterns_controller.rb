@@ -167,6 +167,7 @@ class PatternsController < ApplicationController
 
     respond_to do |format|
       if @pattern.update_attributes(params[:pattern])
+        apply_pattern(@pattern)
         format.html { redirect_to @pattern, notice: 'Pattern was successfully updated.' }
         format.json { head :ok }
       else
