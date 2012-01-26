@@ -16,6 +16,7 @@
     <th>Description</th>
     <th>Amount</th>
     <th>Category</th>
+    <th>Pattern</th>
   </tr>
 	</thead>
 
@@ -26,6 +27,7 @@
 	<td><%= link_to verification.description.gsub(/ /, "&nbsp").html_safe, verifications_path(:year => @year, :description => verification.description) %></td>
     <td><%= verification.amount %></td>
 	<td><%= link_to verification.category ? verification.category : "Uncategorized", verifications_path(:year => @year, :category => verification.category) %></td>
+	<td><%= verification.pattern_id %>
   </tr>
 <% end %>
 </tbody>

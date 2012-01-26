@@ -3,4 +3,5 @@ class Pattern < ActiveRecord::Base
 
   # Associations
   belongs_to :user
+  has_many :verification
 end

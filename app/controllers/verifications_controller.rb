@@ -1,5 +1,26 @@
 require "date"
-
+=begin
+  Actions:
+  - index
+    List verifications. Accepts search parameters
+  - show
+    Show one verification. Not really required, use edit instead?
+  - new
+    Show a form to create a single new verification
+  - edit
+    Show a form to edit a single verification (only category?)
+  - create
+    Create a new verification then redirect to index
+  - update
+    Update a single verification then redirect to index
+  - destroy
+    Delete a single verification then redirect to index
+  - import
+    [No post] Show a form to import several new verifications
+    [post] Create several new verificiations then redirect to index
+  - report
+    Show a tabular aggregation of verifications (category vs month). Accepts year as input.
+=end
 class VerificationsController < ApplicationController
   before_filter :authenticate_user!
   
@@ -8,10 +29,10 @@ class VerificationsController < ApplicationController
   def index
     # Get distinct options
     @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
-    @year = params[:year] || @years.length > 0 ? @years.max.to_s : Date.today.year
+    @year = params[:year]
+    @year ||= @years.length > 0 ? @years.max.to_s : Date.today.year
     @categories = current_user.verifications.sum(:amount, :group => 'category', :order => 'category').keys
     @category = params[:category] || "All"
-    
     # Build conditions
     conditions = ""
     parameters = {}

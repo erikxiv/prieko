@@ -1,3 +1,26 @@
+=begin
+  Actions:
+  - index
+    List all patterns
+  - show
+    Show a single pattern
+  - new
+    Show a form to create a new pattern
+  - edit
+    Show a form to edit a single pattern
+  - create
+    Create a new pattern
+  - update
+    Update a single patern
+  - destroy
+    Delete a single pattern
+  - categorize
+    [No post] Show a form displaying the first uncategorized verification with options to categorize or create pattern
+    [Post] Categorize verification OR create pattern (and categorize several verifications)
+  - suggest
+    [No post] Show a list of suggested patterns to create
+    [Post] Create several patterns (and categorize several verifications)
+=end
 class PatternsController < ApplicationController
   before_filter :authenticate_user!
   
@@ -85,20 +108,23 @@ class PatternsController < ApplicationController
     end
   end
   
+  def apply_pattern(pattern)
+    # Update matching verifications. Don't update manual categorizations
+    current_user.verifications.update_all({:category => pattern.category, :pattern_id => pattern.id}, ["description = ? AND (category IS NULL OR pattern_id IS NOT NULL)", pattern.pattern, ])  
+  end
   def create_and_apply_pattern(pattern, category)
     p = current_user.patterns.create
     p.pattern = pattern
     p.category = category
     p.save
-    # Update matching verifications
-    current_user.verifications.update_all({:category => category, :pattern_id => p.id}, ["description = ?", pattern])  
+    apply_pattern(p)
     return p
   end
 
   # GET /patterns/new
   # GET /patterns/new.json
   def new
-    @pattern = current_user.patterns.create
+    @pattern = current_user.patterns.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -111,95 +137,6 @@ class PatternsController < ApplicationController
     @pattern = current_user.patterns.find(params[:id])
   end
 
-  def validate_import_manual(line)
-    return line =~ /\s*\S+\s*\t\s*\S+\s*/
-  end
-
-  def validate_import(line)
-    return line =~ /\s*\S+\s*\t\s*\S+\s*/
-  end
-
-  def import_manual
-    if params[:import_manual] != nil
-      # Import manual categorizations
-      @import_manual = params[:import_manual]
-
-      # Get all non-validating lines
-      @bad_lines = params[:import_manual].lines.reject{|x| x.strip.length == 0}.reject{|x| validate_import_manual(x)}
-
-      # Return if bad lines
-      if @bad_lines.length > 0
-        render action: "import_manual"
-        return
-      end
-
-      # For each (correct) line, update verification
-      params[:import_manual].lines.reject{|x| x.strip.length == 0}.each do |line|
-        words = line.split("\t")
-        vid = words[0].strip
-        cat = words[1].strip
-        verification = current_user.verifications.where(
-        "verification_id = :verification_id",
-        { :verification_id => vid }
-        ).first
-        if verification
-          verification.category = cat
-          verification.save
-        else
-            @bad_lines.push("Couldn't find verification with id: " + vid.to_s)
-        end
-      end
-      respond_to do |format|
-        if @bad_lines.length > 0
-          format.html { render action: "import_manual" }
-        else
-          format.html { redirect_to "/" }
-        end
-      end
-    else
-      respond_to do |format|
-        format.html { render action: "import_manual" }
-      end
-    end
-  end
-
-  def import
-    if params[:import] != nil
-      # Import manual categorizations
-      @import = params[:import]
-
-      # Get all non-validating lines
-      @bad_lines = params[:import].lines.reject{|x| x.strip.length == 0}.reject{|x| validate_import(x)}
-
-      # Return if bad lines
-      if @bad_lines.length > 0
-        render action: "import"
-        return
-      end
-
-      # For each (correct) line, create pattern and update verifications
-      params[:import].lines.reject{|x| x.strip.length == 0}.each do |line|
-        words = line.split("\t")
-        pattern = words[0].strip
-        cat = words[1].strip
-        create_and_apply_pattern(pattern, cat)
-      end
-      
-      # respond
-      respond_to do |format|
-        if @bad_lines.length > 0
-          format.html { render action: "import" }
-        else
-          format.html { redirect_to "/" }
-        end
-      end
-    else
-      respond_to do |format|
-        format.html { render action: "import" }
-      end
-    end
-  end
-
   # POST /patterns
   # POST /patterns.json
   def create
@@ -208,7 +145,8 @@ class PatternsController < ApplicationController
         render action: "index"
       else  
         # Standard create
-        @pattern = current_user.patterns.create(params[:pattern])
+        @pattern = current_user.patterns.new(params[:pattern])
+        apply_pattern(@pattern)
 
         respond_to do |format|
           if @pattern.save

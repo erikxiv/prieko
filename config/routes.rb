@@ -7,7 +7,6 @@ Eco::Application.routes.draw do
   match "/import" => "verifications#import"
   match "/patterns/suggest" => "patterns#suggest"
   match "/report" => "verifications#report"
-  match "/clear" => "verifications#clear"
   match "/categorize" => "patterns#categorize"
   resources :verifications
   resources :patterns

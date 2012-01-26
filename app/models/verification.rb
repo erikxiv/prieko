@@ -4,4 +4,5 @@ class Verification < ActiveRecord::Base
   
   # Associations
   belongs_to :user
+  belongs_to :pattern
 end

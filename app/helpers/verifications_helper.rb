@@ -26,7 +26,8 @@ module VerificationsHelper
         :verification_id => columns[2].strip,
         :verification_date => Date.strptime(columns[1].strip, "%Y-%m-%d"),
         :description => UnicodeUtils.upcase(columns[3].strip),
-        :amount => columns[4].strip.gsub(/[^0-9\-\,]/, "").gsub(/,/,".").to_f}
+        :amount => columns[4].strip.gsub(/[^0-9\-\,]/, "").gsub(/,/,".").to_f,
+        :balance => columns[4].strip.gsub(/[^0-9\-\,]/, "").gsub(/,/,".").to_f}
       # check for visa date text field
       if columns[3].strip =~ /.*\/\d\d\-\d\d\-\d\d$/
         sebhash[:description] = UnicodeUtils.upcase(columns[3].strip[/(.*)\/(\d\d\-\d\d\-\d\d)$/, 1].strip)

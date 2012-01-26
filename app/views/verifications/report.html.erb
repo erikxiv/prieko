@@ -17,16 +17,24 @@
 	</tr>
 	</thead>
 	<tbody>
-	<% (0..@report.height-1).each do |row_index| %>
-	<tr>
-		<td><%= link_to @report.row_headers[row_index], verifications_path(:year => @year, :category => @report.row_headers[row_index]) %></td>
-		<% @report.data[row_index].each_with_index do |cell, index| %>
-		<td><%= cell ? html_currency(cell) : "" %></td>
+		<% (0..@report.height-1).each do |row_index| %>
+		<tr>
+			<td><%= link_to @report.row_headers[row_index], verifications_path(:year => @year, :category => @report.row_headers[row_index]) %></td>
+			<% @report.data[row_index].each_with_index do |cell, index| %>
+			<td><%= cell ? html_currency(cell) : "" %></td>
+			<% end %>
+			<td><b><%= html_currency(@report.average_row(row_index)) %></b></td>
+			<td><b><%= html_currency(@report.sum_row(row_index)) %></b></td>
+		</tr>
 		<% end %>
-		<td><b><%= html_currency(@report.average_row(row_index)) %></b></td>
-		<td><b><%= html_currency(@report.sum_row(row_index)) %></b></td>
-	</tr>
-	<% end %>
+		<tr>
+			<td><b>Total</b></td>
+			<% (0..@report.width-1).each do |col_index| %>
+			<td><b><%= html_currency(@report.sum_column(col_index)) %></b></td>
+			<% end %>
+			<td><b><%= html_currency(@report.average) %></b></td>
+			<td><b><%= html_currency(@report.sum) %></b></td>
+		</tr>
 	</tbody>
 </table>
 

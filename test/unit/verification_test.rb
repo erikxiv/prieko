@@ -32,11 +32,10 @@ class VerificationTest < ActiveSupport::TestCase
     verification.amount = nil
     assert !verification.save, "Saved the verification without amount"
   end
-    
-  test "should not save verification with non-decimal amount" do
-    verification = verifications(:one).dup
-    verification.amount = "not numeric"
-    assert !verification.save, "Saved the verification with non-decimal amount"
-  end
-    
+
+    test "should not save verification with non-decimal amount" do
+      verification = verifications(:one).dup
+      verification.amount = "not numeric"
+      assert !verification.save, "Saved the verification with non-decimal amount"
+    end
 end

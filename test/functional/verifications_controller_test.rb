@@ -92,4 +92,13 @@ class VerificationsControllerTest < ActionController::TestCase
       delete :destroy, id: @verification.to_param
     end
   end
+
+  test "should list only verifications for the specified year" do
+    sign_in users(:one)
+    get :index, year: 2011
+    maxyear = assigns(:verifications).map{|x| x.year}.max
+    minyear = assigns(:verifications).map{|x| x.year}.max
+    assert minyear == 2011, "Should have only listed verifications from year 2011, got verifications from year " + minyear.to_s
+    assert maxyear == 2011, "Should have only listed verifications from year 2011, got verifications from year " + maxyear.to_s
+  end
 end

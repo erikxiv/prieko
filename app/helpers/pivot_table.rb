@@ -34,7 +34,20 @@ module PivotTable
     end
     
     def average_row(index)
-      @data[index].map{|x| x ? x.to_f : 0}.inject{|sum,x| sum += x} / @data[index].size
+      @data[index].map{|x| x ? x.to_f : 0}.inject{|sum,x| sum += x} / width
+    end
+    
+    def sum_column(index)
+      @data.map{|x| x[index] ? x[index].to_f : 0}.sum
+    end
+    
+    def average
+      # average total per column
+      @data.map{|x| x.map{|y| y ? y.to_f : 0}.sum}.sum / width
+    end
+    
+    def sum
+      @data.map{|x| x.map{|y| y ? y.to_f : 0}.sum}.sum
     end
     
     def sort_rows!

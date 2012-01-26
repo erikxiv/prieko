@@ -53,4 +53,17 @@ class PatternsControllerTest < ActionController::TestCase
 
     assert_redirected_to patterns_path
   end
+  
+  test "new pattern should not overwrite manual categorizations" do
+    sign_in users(:one)
+    post :create, pattern: @pattern.attributes
+    assert Verification.find(verifications(:manual_categorization).id).category == "ManualCategorization", "New pattern overrode manual categorization"
+  end
+
+  test "new pattern should categorize matching verifications" do
+    sign_in users(:one)
+    post :create, pattern: @pattern.attributes
+    puts Verification.find(verifications(:no_categorization).id).inspect
+    assert Verification.find(verifications(:no_categorization).id).category == "CategoryOne", "New pattern did not categorize matching verification"
+  end
 end
