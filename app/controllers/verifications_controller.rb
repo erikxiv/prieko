@@ -96,6 +96,7 @@ class VerificationsController < ApplicationController
           if ! s.category
             match = @patterns.reject{|p| p.pattern != s.description}.first
             s.category = match ? match.category : nil
+            s.pattern_id = match ? match.id : nil
           end
           s.save
         end
