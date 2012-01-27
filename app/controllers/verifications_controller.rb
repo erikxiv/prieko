@@ -94,7 +94,7 @@ class VerificationsController < ApplicationController
         verifications.each do |s|
           # Check patterns for match if no category supplied
           if ! s.category
-            match = @patterns.reject{|p| p.pattern != s.description}.first
+            match = @patterns.reject{|p| p.pattern.casecmp(s.description) != 0}.first
             s.category = match ? match.category : nil
             s.pattern_id = match ? match.id : nil
           end

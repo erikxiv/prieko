@@ -63,7 +63,6 @@ class PatternsControllerTest < ActionController::TestCase
   test "new pattern should categorize matching verifications" do
     sign_in users(:one)
     post :create, pattern: @pattern.attributes
-    puts Verification.find(verifications(:no_categorization).id).inspect
     assert Verification.find(verifications(:no_categorization).id).category == "CategoryOne", "New pattern did not categorize matching verification"
   end
 end

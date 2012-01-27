@@ -101,4 +101,17 @@ class VerificationsControllerTest < ActionController::TestCase
     assert minyear == 2011, "Should have only listed verifications from year 2011, got verifications from year " + minyear.to_s
     assert maxyear == 2011, "Should have only listed verifications from year 2011, got verifications from year " + maxyear.to_s
   end
+
+  test "should have imported verification" do
+    sign_in users(:one)
+    put :import, import: "2011-09-05	2011-09-05	987123987 	DescriptionOne /11-09-03 	-78,00 	2.460,59"
+    assert Verification.where(:verification_id => '987123987').count == 1, "Import failed, count: " + Verification.where(:verification_id => '987123987').count.to_s
+  end
+
+  test "autocategorized imported verifications should set pattern" do
+    sign_in users(:one)
+    put :import, import: "2011-09-05	2011-09-05	987123987 	DescriptionOne /11-09-03 	-78,00 	2.460,59"
+    assert Verification.where(:verification_id => '987123987').first.category == "CategoryOne", "Imported verification category differs from expected: CategoryOne != " + Verification.where(:verification_id => '987123987').first.category.to_s
+    assert Verification.where(:verification_id => '987123987').first.pattern_id != nil, "Imported verification pattern should not be nil"
+  end
 end
