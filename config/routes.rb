@@ -2,7 +2,8 @@ Eco::Application.routes.draw do
 
   devise_for :users
 
-  root :to => "dashboard#index"
+  root :to => 'spa#index'
+  match "/verifications/pivot" => "verifications#pivot"
   match "/start" => "start#index"
   match "/import" => "verifications#import"
   match "/patterns/suggest" => "patterns#suggest"
