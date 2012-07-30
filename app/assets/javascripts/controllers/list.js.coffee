@@ -12,7 +12,7 @@ changeTab = (menuElement) ->
 	# Change content
 	$('#content').html("Loading...<br/>")
 	#pivotData = JSON.parse(fakeJsonTable)
-	$.get '/verifications.json', (data) ->
+	$.get '/verifications.json'+window.spa.query.toString(), (data) ->
 		$('#content').html(tmpl("list_template",{data: data}))
 
 fakeListHtml = '	<table class="metro">

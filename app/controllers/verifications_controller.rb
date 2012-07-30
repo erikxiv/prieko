@@ -28,19 +28,36 @@ class VerificationsController < ApplicationController
   # GET /verifications
   # GET /verifications.json
   def index
-    # Get distinct options
-    @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
-    @year = params[:year]
-    @year ||= @years.length > 0 ? @years.max.to_s : Date.today.year
-    @categories = current_user.verifications.sum(:amount, :group => 'category', :order => 'category').keys
-    @category = params[:category] || "All"
-    # Build conditions
-    conditions = ""
-    parameters = {}
-    if @year != "All"
-      conditions += " AND year=:year"
-      parameters[:year] = @year
+    # Setup default values (LastYear)
+    from_date = (Date.today << 12) + 1
+    to_date = Date.today
+
+    # Apply parameters
+    if params[:DateRange]
+      if params[:DateRange] == "LastMonth"
+        from_date = (Date.today << 1) + 1
+      elsif params[:DateRange] == "LastYear"
+        # default values
+      end
+    elsif params[:Year]
+      if params[:Month]
+        from_date = Date.new(params[:Year].to_i, params[:Month].to_i, 1)
+        to_date = Date.new(params[:Year].to_i, params[:Month].to_i, days_in_month(from_date.month, from_date.year))
+      else
+        from_date = Date.new(params[:Year].to_i, 1, 1)
+        to_date = Date.new(params[:Year].to_i, 12, 31)
+      end
+    else
+      # Show all
+      from_date = Date.new(1,1,1)
     end
+
+    # Get distinct options
+    #@years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
+    @category = params[:Category] || "All"
+    # Build conditions
+    conditions = " AND verification_date >= :from_date AND verification_date <= :to_date"
+    parameters = { :from_date => from_date, :to_date => to_date }
     if @category != "All"
       if @category == ""
         conditions += " AND category is null"
@@ -175,34 +192,70 @@ class VerificationsController < ApplicationController
     end
   end
 
-  def pivot
-    @result = [
-    	["Category",1,2,3,4,5,6,7,"Average","Total"],
-    	["CSN","",-9122,"","",-9122,"","",-2606,-18244],
-    	["Cigaretter",-253,-636,-913,-661,-636,-742,"",-549,-3841],
-    	["Hushåll",-1156,-2478,-1766,-1239,-1323,-3326,"",-1613,-11288],
-    	["Hyra",-6140,-6140,-6140,-6140,-6140,-6655,"",-5336,-37355],
-    	["Kläder","",-1495,"","",-4748,-2300,"",-1220,-8543],
-    	["Kontant","","",-1400,"","","","",-200,-1400],
-    	["Lunch",-2341,-3461,-3725,-1584,-1797,-1836,"",-2106,-14744],
-    	["Lön",32610,30382,32579,35809,28112,38321,"",28259,197813],
-    	["Mat",-2278,-2239,-2223,-1634,-2961,-3026,"",-2052,-14362],
-    	["Nöje",-1990,-1872,-2374,-1164,-3271,-1110,"",-1683,-11781],
-    	["Resa","","","","",-7186,-1023,"",-1173,-8209],
-    	["Sparkonto",-7000,-5000,-6913,-10000,-5500,-10078,-10000,-1905,-13335],
-    	["Systembolaget",-688,-714,-1047,-995,-373,-1799,"",-802,-5616],
-    	["Transport",-790,-790,-790,-790,-790,-790,"",-677,-4740],
-    	["Övrigt",-792,-1784,-1280,-1583,-1205,-3399,"",-1208,-8459],
-    	["Total",-2873,-533,-2667,-3034,-5939,-18532,-10000,-757,-5299]
-    ]
+  COMMON_YEAR_DAYS_IN_MONTH = [nil, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  def days_in_month(month, year = Time.now.year)
+     return 29 if month == 2 && Date.gregorian_leap?(year)
+     COMMON_YEAR_DAYS_IN_MONTH[month]
+  end
 
-    @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
-    @year = params[:year] 
-    @year ||= @years.length > 0 ? @years.max.to_s : Date.today.year
+  def pivot
+    # Setup default values (LastYear)
+    pivot_on = :month # month or day
+    go_back = 11 # one year
+    from_date = Date.today
+
+    # Apply parameters
+    if params[:DateRange]
+      if params[:DateRange] == "LastMonth"
+        pivot_on = :day
+        go_back = (from_date-(from_date << 1)).to_i-1
+      elsif params[:DateRange] == "LastYear"
+        pivot_on = :month
+        go_back = 11
+      end
+    elsif params[:Year]
+      from_date = Date.new(params[:Year].to_i, params[:Month] ? params[:Month].to_i : 12, 1)
+      if params[:Month]
+        pivot_on = :day
+        dim = days_in_month(from_date.month, from_date.year)
+        from_date = from_date + dim-1
+        go_back = dim-1
+      else
+        pivot_on = :month
+        go_back = 11
+      end
+    else
+      # Show yearly stats      
+      pivot_on = :year
+      go_back = Date.today.year - current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys.min
+    end
+    
     @report = PivotTable::PivotTable.new
     last_month = @year.to_s == Date.today.year.to_s ? Date.today.month : 12
-    (1..last_month).each do |month|
-      @report.add_column(month, current_user.verifications.sum(:amount, :conditions => "month=#{month} and year=#{@year}", :group => 'category'))
+    go_back.downto(0) do |step|
+      if params[:Category]
+        if pivot_on == :year
+          period = from_date << step*12
+          @report.add_column(period.year, current_user.verifications.sum(:amount, :conditions => ["year=? AND category=?", period.year, params[:Category]], :group => 'description'))
+        elsif pivot_on == :day
+          period = from_date - step
+          @report.add_column(period.day, current_user.verifications.sum(:amount, :conditions => ["verification_date=? AND category=?", period, params[:Category]], :group => 'description'))
+        else #month
+          period = from_date << step
+          @report.add_column(period.month, current_user.verifications.sum(:amount, :conditions => ["month=? and year=? AND category=?", period.month, period.year, params[:Category]], :group => 'description'))
+        end
+      else
+        if pivot_on == :year
+          period = from_date << step*12
+          @report.add_column(period.year, current_user.verifications.sum(:amount, :conditions => "year=#{period.year}", :group => 'category'))
+        elsif pivot_on == :day
+          period = from_date - step
+          @report.add_column(period.day, current_user.verifications.sum(:amount, :conditions => "verification_date='#{period.to_s}'", :group => 'category'))
+        else #month
+          period = from_date << step
+          @report.add_column(period.month, current_user.verifications.sum(:amount, :conditions => "month=#{period.month} and year=#{period.year}", :group => 'category'))
+        end
+      end
     end
     @report.sort_rows!
     

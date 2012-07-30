@@ -58,7 +58,7 @@ module PivotTable
     
     def average
       # average total per column
-      @data.map{|x| x.map{|y| y ? y.to_f : 0}.sum}.sum / width
+      width > 0 ? @data.map{|x| x.map{|y| y ? y.to_f : 0}.sum}.sum / width : 0
     end
     
     def sum

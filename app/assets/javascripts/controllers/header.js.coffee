@@ -6,6 +6,11 @@ $ ->
 	$('.header_menu_item').click (event)->
 		changeTab($(this))
 	window.spa.changeTab.Header = (x) -> changeTab($("#_#{x}"))
+	$.get '/categories.json', (categories) ->
+		$('#category_filter_menu').html(tmpl("categories_menu_template",{categories: categories}))
+		$('#category_filter_menu a').address -> 
+		    $(this).attr('href').replace(/^#/,'')
+
 
 
 # Change content when header menu item is clicked
@@ -43,7 +48,7 @@ createQueryObject = ->
 		this
 	# Method to retrieve a parameter
 	F.get = (name) ->
-		parameters[name]
+		decodeURIComponent(parameters[name]) if parameters[name]
 	# Method to clear all parameters
 	F.clear = () ->
 		parameters = {}
