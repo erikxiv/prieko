@@ -2,6 +2,7 @@ $ ->
 	$('body').append(template)
 	
 template = "<script type='text/html' id='pivot_template'>
+<div id='pivot_container'>
 <div id='pivot_table'>
 <table class='metro'>
 	<% for (var ri = 0; ri < data.length; ri++) { %>
@@ -15,8 +16,11 @@ template = "<script type='text/html' id='pivot_template'>
 	<% } %>
 </table>
 </div>
-<div id='pivot_graph' style='width:600px;height:300px;'>
+<div id='pivot_graph'>
+<h2>Income</h2>
+<div id='pivot_graph_pos' style='width:600px;height:300px;'></div>
+<h2>Expenditures</h2>
+<div id='pivot_graph_neg' style='width:600px;height:300px;'></div>
 </div>
-<script language='javascript' type='text/javascript' src='/flot/jquery.flot.js'></script>
-<script language='javascript' type='text/javascript' src='/flot/jquery.flot.stack.js'></script>
+</div>
 </script>"

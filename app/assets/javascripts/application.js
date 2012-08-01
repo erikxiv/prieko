@@ -6,6 +6,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require lib/jquery.flot.js
+//= require lib/jquery.flot.stack.js
 //= require_tree .
 
 $(document).ready(function() {
