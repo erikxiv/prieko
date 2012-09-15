@@ -1,0 +1,9 @@
+<%- headers = ["Date", "Description", "Amount", "Category"] -%>
+<%= CSV.generate_line(headers, {:row_sep => nil, :col_sep => ?;}).html_safe %>
+<%- @verifications.each do |verification| -%>
+<%- row = [ verification.verification_date,
+			verification.description,
+			verification.amount,
+            verification.category ? verification.category : "Uncategorized" ] -%>
+<%=   CSV.generate_line(row, {:row_sep => nil, :col_sep => ?;, :encoding => 'Windows-1252'}).html_safe %>
+<%- end -%>

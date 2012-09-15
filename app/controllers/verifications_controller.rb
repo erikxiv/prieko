@@ -1,5 +1,6 @@
 # encoding: UTF-8
 require "date"
+require "csv"
 =begin
   Actions:
   - index
@@ -53,7 +54,8 @@ class VerificationsController < ApplicationController
     end
 
     # Get distinct options
-    #@years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
+    @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
+    @categories = current_user.verifications.sum(:amount, :group => 'category', :order => 'category ASC').keys
     @category = params[:Category] || "All"
     # Build conditions
     conditions = " AND verification_date >= :from_date AND verification_date <= :to_date"
@@ -77,6 +79,7 @@ class VerificationsController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @verifications }
+      format.csv { render csv: @verifications }
     end
   end
 

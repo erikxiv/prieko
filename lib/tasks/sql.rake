@@ -5,4 +5,7 @@ namespace :sql do
   task :cleanup => :environment do
     Verification.delete_all('year is null')
   end
+  task :rmposmat => :environment do
+    Verification.delete_all("amount > 0 and category='Mat'")
+  end
 end

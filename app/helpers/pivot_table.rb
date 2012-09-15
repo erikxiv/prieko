@@ -30,10 +30,19 @@ module PivotTable
     end
     
     def toJSON()
-      @result = []
-      @result.push(["Category"] + @column_headers << "Average" << "Total")
-      (0..height-1).each { |row_index| @result.push([@row_headers[row_index]] + @data[row_index] << average_row(row_index) << sum_row(row_index))}
-      @result.push(["Total"] + (0..width-1).map{|c| sum_column(c)} << average << sum)
+      @result = {
+        column_headers: @column_headers,
+        row_headers: @row_headers,
+        data: @data,
+        row_averages: (0..height-1).map { |row_index| average_row(row_index) },
+        row_totals: (0..height-1).map { |row_index| sum_row(row_index) },
+        column_totals: (0..width-1).map { |column_index| sum_column(column_index) },
+        average: average,
+        total: sum
+      }
+      # @result.push(["Category"] + @column_headers << "Average" << "Total")
+      # (0..height-1).each { |row_index| @result.push([@row_headers[row_index]] + @data[row_index] << average_row(row_index) << sum_row(row_index))}
+      # @result.push(["Total"] + (0..width-1).map{|c| sum_column(c)} << average << sum)
       # @result["row_averages"] = (0..@row_headers.length-1).map {|r| average_row(r)}
       # @result["row_sums"] = (0..@row_headers.length-1).map {|r| sum_row(r)}
       # @result["column_sums"] = (0..@column_headers.length-1).map {|r| sum_column(r)}
