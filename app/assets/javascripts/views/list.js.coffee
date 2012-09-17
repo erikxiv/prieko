@@ -7,6 +7,7 @@ window.eco.views.list = Backbone.View.extend({
 	selected_index: -1
 
 	render: (event) ->
+		window.eco.debug.log_event("list.render", event)
 		this.$el.html(this.template({data:this.model.toJSON()}))
 		this
 
@@ -17,22 +18,21 @@ window.eco.views.list = Backbone.View.extend({
 		# "click tr.verification" : "edit_category"
 		"keypress" : "ignore"
 		"keyup input" : "key_up"
-		# "keydown tr.verification" : "key_down"
 		"click input.category" : "category_edit"
 		"focus input.category" : "category_edit"
 		"focusout input.category" : "category_unedit"
 		
 	ignore: (event) ->
+		#window.eco.debug.log_event("list.ignore", event)
 		event.stopPropagation()
 	key_up: (event) ->
-		# Up - 38
-		# Down - 40
-		# Enter - 13
-		# $("#list_debug").html("keyCode: "+event.keyCode)
+		window.eco.debug.log_event("list.key_up " + event.keyCode, event)
 		index = $(event.currentTarget).parent().parent().data("index")
 		# Unfocus if enter key is pressed
-		if event.keyCode == 13
-			$(event.currentTarget).blur()
+		if !event.shiftKey && event.keyCode == 13 # enter
+			# focus on the next category input
+			$("tr.verification[data-index="+(index+1)+"] input.category").focus()
+#			$(event.currentTarget).blur()
 		else if event.shiftKey # shift
 			if event.keyCode == 40 # down
 				# focus on the next category input
@@ -40,27 +40,67 @@ window.eco.views.list = Backbone.View.extend({
 			else if event.keyCode == 38 # up
 				# focus on the previous category input
 				$("tr.verification[data-index="+(index-1)+"] input.category").focus()
-	key_down: (event) ->
-		#alert("key_down")
-		
-	submit_category: (event) ->
-		alert("hi")
-		$(event.currentTarget).html($("input.category").val())
+			else if event.keyCode == 13 # enter
+				this.new_pattern(event)
+				# focus on the next category input
+				console.log("trying to focus back")
+				$("tr.verification[data-index="+(index+1)+"] input.category").focus()
+	
+	new_pattern: (event) ->
+		window.eco.debug.log_event("list.new_pattern", event)
+		# get verification
+		cid = $(event.currentTarget).parent().parent().data("cid")
+		model = this.model.getByCid(cid)
+		# get new value
+		pattern = model.get("description")
+		category = $(event.currentTarget).val()
+		# set model category to ensure that focus shift event does not set this model to a manually edited one
+		model.set("category", category)
+		# set model pattern to arbitrary number to ensure server sees pattern as not manually edited
+		model.set("pattern_id", -1)
+		model.save()
+		# create/edit pattern
+		p = window.eco.state.patterns.find((p) -> p.get("pattern") == pattern)
+		if p
+			p.set("category", category)
+		else
+			p = new window.eco.models.pattern({"pattern":pattern, "category":category})
+		p.save() # applies pattern on server
+		# add to patterns collection
+		window.eco.state.patterns.add(p)
+		# apply locally
+		window.eco.state.verifications.each((v) ->
+			if v.get("description") == pattern and (!v.get("pattern_id") || v.get("pattern_id") == p.id)
+				v.set("category", category)
+				v.set("pattern_id", -1)
+				# don't save, already done server side
+		)
+		# Update categories
+		window.eco.state.categories.fetch()
+		# rerender list
+		this.render()
 	
 	category_edit: (event) ->
+		window.eco.debug.log_event("list.category_edit", event)
 		$(event.currentTarget).select()
 		
 	category_unedit: (event) ->
+		window.eco.debug.log_event("list.category_unedit", event)
 		# save changes
 		cid = $(event.currentTarget).parent().parent().data("cid")
 		model = this.model.getByCid(cid)
 		newValue = $(event.currentTarget).val()
-		#$("#list_debug").html("cid: "+cid+"<br/>"+"oldValue: "+model.get("category")+"<br/>newValue: "+newValue)
-		if model.get("category") != newValue
+		# Is the value changed?
+		if model.get("category") != newValue && newValue != 'Uncategorized'
 			model.set("category", newValue)
+			model.set("pattern_id", null)
 			model.save()
+			$(event.currentTarget).addClass("single")
+			# Update categories
+			window.eco.state.categories.fetch()
 	
 	edit_category: (event) ->
+		window.eco.debug.log_event("list.edit_category", event)
 		# t = ""
 		# for own key,value of event
 		# 	if typeof value == "object"
@@ -94,7 +134,7 @@ window.eco.views.list = Backbone.View.extend({
 	    <td class=\"\"><%=verification.verification_date%></td>
 		<td class=\"\"><%=verification.description%></td>
 	    <td class=\"number <%= verification.amount > 0 ? 'positive-number' : 'negative-number' %>\"><%=verification.amount.toFixed(0)%></td>
-		<td class=\"category\"><input class=\"category\" value=\"<%=verification.category || 'Uncategorized'%>\"/></td>
+		<td class=\"category\"><input class=\"category <%=verification.category ? (verification.pattern_id? 'pattern' : 'single') : 'uncategorized'%>\" value=\"<%=verification.category || 'Uncategorized'%>\"/></td>
 	  </tr>
 	<% } %>
 </table>")

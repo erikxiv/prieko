@@ -61,7 +61,7 @@ class VerificationsController < ApplicationController
     conditions = " AND verification_date >= :from_date AND verification_date <= :to_date"
     parameters = { :from_date => from_date, :to_date => to_date }
     if @category != "All"
-      if @category == ""
+      if @category == "" || @category == "Uncategorized"
         conditions += " AND category is null"
       else
         conditions += " AND category=:category"
@@ -171,9 +171,17 @@ class VerificationsController < ApplicationController
   # PUT /verifications/1.json
   def update
     @verification = current_user.verifications.find(params[:id])
-
+    logger.debug("Updating ver " + @verification.id.to_s)
+    u = {}
+    params.each do |p,v|
+      if p=="category" || p=="pattern_id"
+        u[p] = v
+      end
+    end
+    logger.debug("Updating ver - " + u.to_yaml)
     respond_to do |format|
-      if @verification.update_attributes(params[:verification])
+      if @verification.update_attributes(u)
+        logger.debug("Updating ver " + @verification.id.to_s + " OK")
         format.html { redirect_to @verification, notice: 'Verification was successfully updated.' }
         format.json { head :ok }
       else

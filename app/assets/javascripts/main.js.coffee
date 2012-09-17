@@ -24,6 +24,7 @@ $ ->
 	window.eco.state.dateranges = new window.eco.models.daterange()
 	window.eco.state.verifications = new window.eco.collections.verifications()
 	window.eco.state.verification_pivot = new window.eco.models.verification_pivot()
+	window.eco.state.patterns = new window.eco.collections.patterns()
 	
 	# Master view
 	masterview = new window.eco.views.master({model: window.eco.state.router})
@@ -43,8 +44,7 @@ $ ->
 	# List view
 	window.eco.state.views.list = new window.eco.views.list({model: window.eco.state.verifications})
 	# Patterns view
-	window.eco.state.views.patterns = new window.eco.views.patterns({model: {}})
-	window.eco.state.views.patterns.render()
+	window.eco.state.views.patterns = new window.eco.views.patterns({model: window.eco.state.patterns})
 	
 	# Go to requested page
 	starturl = window.location.hash || "#pivot"
@@ -54,3 +54,4 @@ $ ->
 	window.eco.state.categories.fetch()
 	window.eco.state.verification_pivot.fetch()
 	window.eco.state.verifications.fetch()
+	window.eco.state.patterns.fetch()

@@ -1,4 +1,5 @@
 //= require main
+//= require models/patterns
 
 # $ ->
 # 	$('#_patterns').click ->
@@ -48,6 +49,15 @@ window.eco.collections.verifications = Backbone.Collection.extend({
 					sebhash["verification_date"] = "20" + cells[3].trim().match(/(.*)\/(\d\d\-\d\d\-\d\d)$/)[2]
 				if cells.length == 7
 					"category": cells[6].trim()
+				else
+					console.log("Trying to match " + sebhash["description"])
+					# Match existing pattern
+					p = window.eco.state.patterns.find((p) -> p.get("pattern")==sebhash["description"])
+					console.log("p " + p)
+					if p
+						sebhash["category"] = p.get("category")
+						sebhash["pattern_id"] = p.id
+						console.log("Found match! " + p.id + "/" + p.get("pattern"))
 				vdate = new Date(sebhash["verification_date"])
 				sebhash["month"] = vdate.getMonth()
 				sebhash["year"] = vdate.getFullYear()

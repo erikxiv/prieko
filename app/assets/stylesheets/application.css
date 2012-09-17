@@ -46,6 +46,8 @@ table.metro .negative-number {color: #FF5555}
 table.metro .positive-number {color: #55FF55}
 table.metro tr.selected {font-weight: bold}
 table.metro input.category {background-color: #346669; border: 0px; color: white; font-family: 'Open Sans', sans-serif; font-size: 16px; padding: 0px; margin: 0px}
+table.metro input.category.uncategorized {color: #FF5555}
+table.metro input.category.single {color: #8EE}
 
 div#pivot_table {position: fixed; display: none}
 div#pivot_graph {position: fixed; display: none}

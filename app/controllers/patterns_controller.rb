@@ -143,13 +143,19 @@ class PatternsController < ApplicationController
       # Apply suggested patterns
       if params[:suggested]
         render action: "index"
-      else  
-        # Standard create
-        @pattern = current_user.patterns.new(params[:pattern])
-        apply_pattern(@pattern)
+      else
+        # Check for existing pattern before creating a new one
+        @pattern = current_user.patterns.where(:pattern => params[:pattern]).first()
+        if @pattern
+          @pattern.category = params[:category]
+        else
+          @pattern = current_user.patterns.new(:pattern => params[:pattern], :category => params[:category])
+        end
 
         respond_to do |format|
           if @pattern.save
+            # Apply pattern to existing verifications
+            apply_pattern(@pattern)
             format.html { redirect_to @pattern, notice: 'Pattern was successfully created.' }
             format.json { render json: @pattern, status: :created, location: @pattern }
           else
@@ -166,7 +172,7 @@ class PatternsController < ApplicationController
     @pattern = current_user.patterns.find(params[:id])
 
     respond_to do |format|
-      if @pattern.update_attributes(params[:pattern])
+      if @pattern.update_attributes(:category => params[:category])
         apply_pattern(@pattern)
         format.html { redirect_to @pattern, notice: 'Pattern was successfully updated.' }
         format.json { head :ok }

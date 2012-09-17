@@ -29,7 +29,7 @@ window.eco.views.categories_popup = Backbone.View.extend({
 			<a href=\"#<%=window.eco.state.path+window.eco.state.router.modifyQuery(\"Category\")%>\" class=\"nav\">All</a><br/>
 			<% for (var i = 0; i < categories.length; i++) { 
 				var category = categories[i]; %>
-			<a href=\"#<%=window.eco.state.path+window.eco.state.router.modifyQuery(\"Category\",category.value)%>\" class=\"nav\"><%=category.value%></a><br/>
+			<a href=\"#<%=window.eco.state.path+window.eco.state.router.modifyQuery(\"Category\",category.value || 'Uncategorized')%>\" class=\"nav\"><%=category.value || 'Uncategorized'%></a><br/>
 			<% } %>
 		</div>
 	")

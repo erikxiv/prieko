@@ -30,16 +30,19 @@ window.eco.views.master = Backbone.View.extend({
 		"click #import_button" : "focus_on_import"
 		"keypress #import_input" : "importOnEnter"
 	keyboard_shortcut: (event) ->
-		window.eco.debug.log_event("master.keyboard_shortcut " + event.keyCode, event)
-		if event.keyCode == 105 # letter 'i'
-			if $("#import_popup").is(":visible")
-				this.hide_popup()
-			else
-				this.hide_popup()
-				$("#import_popup").toggle()
-				this.focus_on_import()
-		event.stopPropagation()
-		false
+		if $(document.activeElement).is("input")
+			window.eco.debug.log_event("master.keyboard_shortcut " + event.keyCode + " passed through", event)
+		else
+			window.eco.debug.log_event("master.keyboard_shortcut " + event.keyCode + " caught", event)
+			if event.keyCode == 105 # letter 'i'
+				if $("#import_popup").is(":visible")
+					this.hide_popup()
+				else
+					this.hide_popup()
+					$("#import_popup").toggle()
+					this.focus_on_import()
+			event.stopPropagation()
+			false
 	focus_on_import: (event) ->
 		window.eco.debug.log_event("master.focus_on_import", event)
 		$("#import_input").focus()
