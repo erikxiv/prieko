@@ -4,6 +4,7 @@ window.eco.views.categories_popup = Backbone.View.extend({
 	el: '#category_filter_menu'
 
 	render: (event) ->
+		window.eco.debug.log_event("categories_popup.render", event)
 		cobj = this.model.toJSON()
 		clist = []
 		for own attr, value of cobj
@@ -12,6 +13,7 @@ window.eco.views.categories_popup = Backbone.View.extend({
 		this
 
 	initialize: ->
+		window.eco.debug.log_event("categories_popup.initialize", event)
 		# Listen to model to update view if category list is updated
 		this.model.on('change', this.render, this)
 		# Listen to router events to update hrefs of links
@@ -21,6 +23,7 @@ window.eco.views.categories_popup = Backbone.View.extend({
 		"click a" : "filter"
 
 	filter: (e) ->
+		window.eco.debug.log_event("categories_popup.filter", event)
 		# Modify url and trigger change
 		window.eco.state.router.navigate($(e.currentTarget).attr("href"), {trigger: true})
 

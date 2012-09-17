@@ -12,25 +12,25 @@ window.eco.router = Backbone.Router.extend({
 	handlers: {'change': []}
 	
 	pivot: (params) ->
+		window.eco.debug.log_event("router.pivot", params)
 		this.requestData() if this.handleQuery("pivot", params || {})
 		if params && params["PivotView"] == "Table"
-			window.eco.state.views.pivot_table.render()
-			#$("#content").html(window.eco.state.views.pivot_table.el)
+			this.switch_content('#_pivot_table_view')
 		else
-			window.eco.state.views.pivot_graph.render()
-			#$("#content").html(window.eco.state.views.pivot_graph.el)
+			this.switch_content('#_pivot_graph_view')
 
 	list: (params) ->
+		window.eco.debug.log_event("router.list", params)
 		this.requestData() if this.handleQuery("list", params || {})
-		#$("#content").html(window.eco.state.views.list.el)
-		window.eco.state.views.list.render()
+		this.switch_content('#_list_table_view')
 
 	patterns: (params) ->
+		window.eco.debug.log_event("router.patterns", params)
 		this.requestData() if this.handleQuery("patterns", params || {})
-		#$("#content").html(window.eco.state.views.patterns.el)
-		window.eco.state.views.patterns.render()
+		this.switch_content('#_patterns_table_view')
 	
 	defaultRoute: (other) ->
+		window.eco.debug.log_event("router.defaultRoute", other)
 		alert("unrecognized route: " + other)
 
 	toJSON: () ->
@@ -39,8 +39,16 @@ window.eco.router = Backbone.Router.extend({
 	on: (eventType, action, obj) ->
 		this.handlers[eventType].push({"action":action,"this":obj}) if this.handlers[eventType]
 		
+	# Switch the view in the main content slot on the page
+	switch_content: (new_content) ->
+		# Move old content to hidden
+		$('#content div').appendTo('#hidden')
+		# Move new content in place
+		$(new_content).appendTo('#content')
+		
 	# Request new data
 	requestData: () ->
+		window.eco.debug.log_event("router.requestData", null)
 		window.eco.state.verification_pivot.fetch()
 		window.eco.state.verifications.fetch()
 		

@@ -2,7 +2,8 @@ include ActionView::Helpers::NumberHelper
 
 module PivotTable
   class PivotTable
-    def initialize()
+    def initialize(column_type)
+      @column_type = column_type
       @table_name = ""
       @row_headers = []
       @column_headers = []
@@ -31,6 +32,7 @@ module PivotTable
     
     def toJSON()
       @result = {
+        column_type: @column_type,
         column_headers: @column_headers,
         row_headers: @row_headers,
         data: @data,

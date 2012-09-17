@@ -1,16 +1,18 @@
 //= require main
 
 window.eco.views.patterns = Backbone.View.extend({
-	#id: "_patterns_table_view"
-	el: "#content"
+	el: "#_patterns_table_view"
+#	el: "#content"
 	selected: null
 	selected_index: -1
 
 	render: (event) ->
+		window.eco.debug.log_event("patterns.render", event)
 		this.$el.html(this.template({data:this.model.toJSON()}))
 		this
 
 	initialize: (options) ->
+		window.eco.debug.log_event("patterns.initialize", options)
 		this.model.on('reset', this.render, this)
 
 	template: _.template("

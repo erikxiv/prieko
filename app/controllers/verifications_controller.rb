@@ -241,7 +241,7 @@ class VerificationsController < ApplicationController
       go_back = Date.today.year - current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys.min
     end
     
-    @report = PivotTable::PivotTable.new
+    @report = PivotTable::PivotTable.new(pivot_on)
     last_month = @year.to_s == Date.today.year.to_s ? Date.today.month : 12
     go_back.downto(0) do |step|
       if params[:Category]

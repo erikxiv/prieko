@@ -2,10 +2,11 @@
 
 window.eco.views.pivot_table = Backbone.View.extend({
 	#id: "_pivot_table_view"
-	#el: "#_pivot_table_view"
-	el: "#content"
+	el: "#_pivot_table_view"
+#	el: "#content"
 
 	render: (event) ->
+		window.eco.debug.log_event("pivot_table.render", event)
 		m = this.model.toJSON()
 		m.n = this.numberFormat
 		this.$el.html(this.template(m))
@@ -14,6 +15,7 @@ window.eco.views.pivot_table = Backbone.View.extend({
 		this
 
 	initialize: (options) ->
+		window.eco.debug.log_event("pivot_table.initialize", options)
 		this.model.on('change', this.render, this)
 		this.model.on('reset', this.render, this)
 #		$("#hidden").append(this.$el.html())

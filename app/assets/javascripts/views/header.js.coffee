@@ -2,32 +2,6 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
-# $ ->
-# 	$('.header_menu_item').click (event)->
-# 		changeTab($(this))
-# 	$('#import_button').click (event) ->
-# 		setTimeout(->
-# 			$('#import_input').focus()
-# 		,1)
-# 	$('#import_input').click (event) ->
-# 		event.stopPropagation()
-# 	$('#import_input').change (event) ->
-# 		importCsv($('#import_input').val())
-# 		$('#import_popup').hide()
-# 		$('#import_input').val("")
-# 	window.spa.changeTab.Header = (x) -> changeTab($("#_#{x}"))
-	# $.get '/categories.json', (categories) ->
-	# 	$('#category_filter_menu').html(tmpl("categories_menu_template",{categories: categories}))
-	# 	$('#category_filter_menu a').address -> 
-	# 	    $(this).attr('href').replace(/^#/,'')
-
-importCsv = (text) ->
-	lines = text.split("\n")
-	# Detect separator
-	col_sep = "\t"
-	# Detect format
-	$('#content').html("<pre>" +text + "</pre>")
-
 # Change content when header menu item is clicked
 changeTab = (menuElement) ->
 	# Recolor header links

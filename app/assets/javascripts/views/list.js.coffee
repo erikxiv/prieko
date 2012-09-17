@@ -1,8 +1,8 @@
 //= require main
 
 window.eco.views.list = Backbone.View.extend({
-	#id: "_list_table_view"
-	el: "#content"
+	el: "#_list_table_view"
+#	el: "#content"
 	selected: null
 	selected_index: -1
 
@@ -12,6 +12,7 @@ window.eco.views.list = Backbone.View.extend({
 		this
 
 	initialize: (options) ->
+		window.eco.debug.log_event("list.initialize", options)
 		this.model.on('reset', this.render, this)
 
 	events:
@@ -55,10 +56,13 @@ window.eco.views.list = Backbone.View.extend({
 		pattern = model.get("description")
 		category = $(event.currentTarget).val()
 		# set model category to ensure that focus shift event does not set this model to a manually edited one
+		old_category = model.get("category")
 		model.set("category", category)
 		# set model pattern to arbitrary number to ensure server sees pattern as not manually edited
 		model.set("pattern_id", -1)
 		model.save()
+		# Update pivot data locally
+		window.eco.state.verification_pivot.recategorize(model, old_category)
 		# create/edit pattern
 		p = window.eco.state.patterns.find((p) -> p.get("pattern") == pattern)
 		if p
@@ -70,10 +74,14 @@ window.eco.views.list = Backbone.View.extend({
 		window.eco.state.patterns.add(p)
 		# apply locally
 		window.eco.state.verifications.each((v) ->
-			if v.get("description") == pattern and (!v.get("pattern_id") || v.get("pattern_id") == p.id)
+			# Only change verifications with matching description and not manually edited
+			if v.get("description") == pattern and v.get("pattern_id")
+				old_category = v.get("category")
 				v.set("category", category)
 				v.set("pattern_id", -1)
 				# don't save, already done server side
+				# Update pivot data locally
+				window.eco.state.verification_pivot.recategorize(v, old_category)
 		)
 		# Update categories
 		window.eco.state.categories.fetch()
@@ -90,6 +98,7 @@ window.eco.views.list = Backbone.View.extend({
 		cid = $(event.currentTarget).parent().parent().data("cid")
 		model = this.model.getByCid(cid)
 		newValue = $(event.currentTarget).val()
+		oldValue = model.get("category")
 		# Is the value changed?
 		if model.get("category") != newValue && newValue != 'Uncategorized'
 			model.set("category", newValue)
@@ -98,6 +107,8 @@ window.eco.views.list = Backbone.View.extend({
 			$(event.currentTarget).addClass("single")
 			# Update categories
 			window.eco.state.categories.fetch()
+			# Update pivot data locally
+			window.eco.state.verification_pivot.recategorize(model, oldValue)
 	
 	edit_category: (event) ->
 		window.eco.debug.log_event("list.edit_category", event)

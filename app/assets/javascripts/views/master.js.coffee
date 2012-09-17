@@ -3,10 +3,12 @@
 window.eco.views.master = Backbone.View.extend({
 	el: '#page'
 	render: (event) ->
+		window.eco.debug.log_event("master.render", event)
 		this.$el.html(this.template(this.model.toJSON()))
 		this.urlChanged()
 		this
 	urlChanged: () ->
+		window.eco.debug.log_event("master.urlChanged", null)
 		# Update queries on main menu links
 		$('#_pivot').attr("href","#pivot"+window.eco.state.router.modifyQuery())
 		$('#_list').attr("href","#list"+window.eco.state.router.modifyQuery())
@@ -19,6 +21,7 @@ window.eco.views.master = Backbone.View.extend({
 		pageName = menuElement.html()
 		document.title = "Prieko - " + pageName
 	initialize: (options) ->
+		window.eco.debug.log_event("master.initialize", options)
 		that = this
 		this.model.on('change', this.urlChanged)
 		$("body").click((e) -> that.hide_popup(e))
@@ -166,7 +169,10 @@ window.eco.views.master = Backbone.View.extend({
 	<div id=\"content\"></div>
 	<div id=\"footer\"></div>
 	<div id=\"hidden\">
+		<div id=\"_list_table_view\"></div>
+		<div id=\"_patterns_table_view\"></div>
 		<div id=\"_pivot_table_view\"></div>
+		<div id=\"_pivot_graph_view\"></div>
 	</div>
 	")
 })

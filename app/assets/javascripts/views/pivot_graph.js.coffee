@@ -1,12 +1,13 @@
 //= require main
 
 window.eco.views.pivot_graph = Backbone.View.extend({
-#	id: "_pivot_graph_view"
-	el: "#content"
+	el: "#_pivot_graph_view"
+#	el: "#content"
 	previousPoint: null
 	that: null
 
 	render: (event) ->
+		window.eco.debug.log_event("pivot_graph.render", event)
 		that = this
 		m = this.model.toJSON()
 		this.$el.html(this.template(m))
@@ -65,6 +66,7 @@ window.eco.views.pivot_graph = Backbone.View.extend({
 		this
 
 	initialize: (options) ->
+		window.eco.debug.log_event("pivot_graph.initialize", options)
 		this.model.on('change', this.render, this)
 		this.model.on('reset', this.render, this)
 
