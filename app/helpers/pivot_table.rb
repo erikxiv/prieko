@@ -80,7 +80,7 @@ module PivotTable
       # Create a hash of row headers and row data
       mapped = Hash.new
       (0..height-1).each do |ri|
-        rh = @row_headers[ri].nil? ? "N/A" : @row_headers[ri]
+        rh = @row_headers[ri].nil? ? "Uncategorized" : @row_headers[ri]
         mapped[rh] = @data[ri]
       end
       # delete data

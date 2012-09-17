@@ -24,7 +24,7 @@ window.eco.models.verification_pivot = Backbone.Model.extend({
 		else if this.get("column_type") == "day"
 			column_name = vdate.getDate()
 		if !old_category
-			old_category="N/A"
+			old_category="Uncategorized"
 		# get indexes
 		column_index = this.get("column_headers").indexOf(column_name)
 		old_row_index = this.get("row_headers").indexOf(old_category)
