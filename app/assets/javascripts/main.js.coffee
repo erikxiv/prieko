@@ -9,8 +9,10 @@ window.eco.state.views = window.eco.state.views || {}
 window.eco.debug = window.eco.debug || {}
 
 $ ->
+	console.log("main.js onload start")
 	# Router
 	window.eco.state.router = new window.eco.router()
+	console.log("main.js router created")
 	# Initiate backbone addressing
 	Backbone.history.start({silent: true})
 	# Initialize state
