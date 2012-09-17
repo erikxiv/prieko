@@ -23,29 +23,37 @@ window.eco.views.list = Backbone.View.extend({
 		"focus input.category" : "category_edit"
 		"focusout input.category" : "category_unedit"
 		
+	select_next: (event) ->
+		index = $(event.currentTarget).parent().parent().data("index")
+		next = $("tr.verification[data-index="+(index+1)+"] input.category")
+		if next.length > 0
+			next.focus()
+		else
+			$(document.activeElement).blur()
+	select_previous: (event) ->
+		index = $(event.currentTarget).parent().parent().data("index")
+		next = $("tr.verification[data-index="+(index-1)+"] input.category").focus()
+		if next.length > 0
+			next.focus()
+		else
+			$(document.activeElement).blur()
+	
 	ignore: (event) ->
 		#window.eco.debug.log_event("list.ignore", event)
 		event.stopPropagation()
 	key_up: (event) ->
 		window.eco.debug.log_event("list.key_up " + event.keyCode, event)
-		index = $(event.currentTarget).parent().parent().data("index")
 		# Unfocus if enter key is pressed
 		if !event.shiftKey && event.keyCode == 13 # enter
-			# focus on the next category input
-			$("tr.verification[data-index="+(index+1)+"] input.category").focus()
-#			$(event.currentTarget).blur()
+			this.select_next(event)
 		else if event.shiftKey # shift
 			if event.keyCode == 40 # down
-				# focus on the next category input
-				$("tr.verification[data-index="+(index+1)+"] input.category").focus()
+				this.select_next(event)
 			else if event.keyCode == 38 # up
-				# focus on the previous category input
-				$("tr.verification[data-index="+(index-1)+"] input.category").focus()
+				this.select_previous(event)
 			else if event.keyCode == 13 # enter
 				this.new_pattern(event)
-				# focus on the next category input
-				console.log("trying to focus back")
-				$("tr.verification[data-index="+(index+1)+"] input.category").focus()
+				this.select_next(event)
 	
 	new_pattern: (event) ->
 		window.eco.debug.log_event("list.new_pattern", event)
