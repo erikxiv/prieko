@@ -81,9 +81,10 @@ window.eco.views.list = Backbone.View.extend({
 		# add to patterns collection
 		window.eco.state.patterns.add(p)
 		# apply locally
+		console.log("checking for other loaded models to update to new pattern: " + pattern)
 		window.eco.state.verifications.each((v) ->
 			# Only change verifications with matching description and not manually edited
-			if v.get("description") == pattern and v.get("pattern_id")
+			if v.get("description") == pattern and (v.get("pattern_id") || !v.get("category"))
 				old_category = v.get("category")
 				v.set("category", category)
 				v.set("pattern_id", -1)
