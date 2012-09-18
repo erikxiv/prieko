@@ -69,8 +69,6 @@ window.eco.views.list = Backbone.View.extend({
 		# set model pattern to arbitrary number to ensure server sees pattern as not manually edited
 		model.set("pattern_id", -1)
 		model.save()
-		# Update pivot data locally
-		window.eco.state.verification_pivot.recategorize(model, old_category)
 		# create/edit pattern
 		p = window.eco.state.patterns.find((p) -> p.get("pattern") == pattern)
 		if p
@@ -80,18 +78,21 @@ window.eco.views.list = Backbone.View.extend({
 		p.save() # applies pattern on server
 		# add to patterns collection
 		window.eco.state.patterns.add(p)
-		# apply locally
+		# Update pivot data locally
+		# window.eco.state.verification_pivot.recategorize(model, old_category)
 		console.log("checking for other loaded models to update to new pattern: " + pattern)
 		window.eco.state.verifications.each((v) ->
 			# Only change verifications with matching description and not manually edited
+			console.log("check " + v.get("description")+"="+pattern+"? and " + (v.get("pattern_id") == true) + " or " + (!v.get("category") == true))	
 			if v.get("description") == pattern and (v.get("pattern_id") || !v.get("category"))
 				old_category = v.get("category")
 				v.set("category", category)
 				v.set("pattern_id", -1)
-				# don't save, already done server side
-				# Update pivot data locally
-				window.eco.state.verification_pivot.recategorize(v, old_category)
+		# 		# don't save, already done server side
+		# 		# Update pivot data locally
+		# 		window.eco.state.verification_pivot.recategorize(v, old_category)
 		)
+		window.eco.state.verification_pivot.fetch()
 		# Update categories
 		window.eco.state.categories.fetch()
 		# rerender list
