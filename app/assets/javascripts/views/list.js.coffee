@@ -42,16 +42,17 @@ window.eco.views.list = Backbone.View.extend({
 		#window.eco.debug.log_event("list.ignore", event)
 		event.stopPropagation()
 	key_up: (event) ->
-		window.eco.debug.log_event("list.key_up " + event.keyCode, event)
+		no_modifier = !(event.altKey || event.metaKey || event.ctrlKey || event.shiftKey)
+		window.eco.debug.log_event("list.key_up " + event.which, event)
 		# Unfocus if enter key is pressed
-		if !event.shiftKey && event.keyCode == 13 # enter
+		if no_modifier && event.which == 13 # enter
 			this.select_next(event)
-		else if event.shiftKey # shift
-			if event.keyCode == 40 # down
+		else if event.shiftKey and !(event.altKey || event.metaKey || event.ctrlKey)
+			if event.which == 40 # down
 				this.select_next(event)
-			else if event.keyCode == 38 # up
+			else if event.which == 38 # up
 				this.select_previous(event)
-			else if event.keyCode == 13 # enter
+			else if event.which == 13 # enter
 				this.new_pattern(event)
 				this.select_next(event)
 	

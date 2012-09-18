@@ -33,17 +33,23 @@ window.eco.views.master = Backbone.View.extend({
 		"click #import_button" : "focus_on_import"
 		"keypress #import_input" : "importOnEnter"
 	keyboard_shortcut: (event) ->
+		pass = true
+		no_modifier = !(event.altKey || event.metaKey || event.ctrlKey || event.shiftKey)
 		if $(document.activeElement).is("input")
-			window.eco.debug.log_event("master.keyboard_shortcut " + event.keyCode + " passed through", event)
+			# ignore key combinations
 		else
-			window.eco.debug.log_event("master.keyboard_shortcut " + event.keyCode + " caught", event)
-			if event.keyCode == 105 # letter 'i'
+			if no_modifier && event.which == 105 # letter 'i'
+				pass = false
 				if $("#import_popup").is(":visible")
 					this.hide_popup()
 				else
 					this.hide_popup()
 					$("#import_popup").toggle()
 					this.focus_on_import()
+		if pass
+			window.eco.debug.log_event("master.keyboard_shortcut " + event.which + " passed through", event)
+		else
+			window.eco.debug.log_event("master.keyboard_shortcut " + event.which + " caught", event)
 			event.stopPropagation()
 			false
 	focus_on_import: (event) ->
@@ -73,7 +79,7 @@ window.eco.views.master = Backbone.View.extend({
 		$("#import_input").val("")
 		this.hide_popup()
 	importOnEnter: (event) ->
-		if (event.keyCode == 13)
+		if (event.which == 13)
 			window.eco.debug.log_event("master.importOnEnter", event)
 			this.importCsv()
 			false

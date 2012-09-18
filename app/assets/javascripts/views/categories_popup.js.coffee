@@ -13,7 +13,7 @@ window.eco.views.categories_popup = Backbone.View.extend({
 		this
 
 	initialize: ->
-		window.eco.debug.log_event("categories_popup.initialize", event)
+		window.eco.debug.log_event("categories_popup.initialize", null)
 		# Listen to model to update view if category list is updated
 		this.model.on('change', this.render, this)
 		# Listen to router events to update hrefs of links

@@ -9,17 +9,17 @@ window.eco.views.daterange_popup = Backbone.View.extend({
 		this
 
 	initialize: ->
-		window.eco.debug.log_event("daterange_popup.initialize", event)
+		window.eco.debug.log_event("daterange_popup.initialize", null)
 		# Listen to router events to update hrefs of links
 		window.eco.state.router.on('change', this.render, this)
 
 	events:
 		"click a" : "filter"
 
-	filter: (e) ->
+	filter: (event) ->
 		window.eco.debug.log_event("daterange_popup.filter", event)
 		# Modify url and trigger change
-		window.eco.state.router.navigate($(e.currentTarget).attr("href"), {trigger: true})
+		window.eco.state.router.navigate($(event.currentTarget).attr("href"), {trigger: true})
 
 	template: _.template("
 	<div class=\"column\">
