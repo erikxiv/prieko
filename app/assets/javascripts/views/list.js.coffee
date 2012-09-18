@@ -118,7 +118,8 @@ window.eco.views.list = Backbone.View.extend({
 			# Update categories
 			window.eco.state.categories.fetch()
 			# Update pivot data locally
-			window.eco.state.verification_pivot.recategorize(model, oldValue)
+			# window.eco.state.verification_pivot.recategorize(model, oldValue)
+			window.eco.state.verification_pivot.fetch()
 	
 	edit_category: (event) ->
 		window.eco.debug.log_event("list.edit_category", event)

@@ -42,7 +42,7 @@ window.eco.router = Backbone.Router.extend({
 	# Switch the view in the main content slot on the page
 	switch_content: (new_content) ->
 		# Move old content to hidden
-		$('#content div').appendTo('#hidden')
+		$('#content > div').appendTo('#hidden')
 		# Move new content in place
 		$(new_content).appendTo('#content')
 		
