@@ -5,11 +5,7 @@ Eco::Application.routes.draw do
   root :to => 'spa#index'
   match "/verifications/pivot" => "verifications#pivot"
   match "/categories" => "categories#index"
-  match "/start" => "start#index"
   match "/import" => "verifications#import"
-  match "/patterns/suggest" => "patterns#suggest"
-  match "/report" => "verifications#report"
-  match "/categorize" => "patterns#categorize"
   resources :verifications
   resources :patterns
 

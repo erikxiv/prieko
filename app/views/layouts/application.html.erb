@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Prieko</title>
+	<title>eco</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
   <%= stylesheet_link_tag    "application" %>
@@ -10,36 +10,6 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-	<!--<div id="menu_nav">
-		<p id="menu">
-			<span class="menu_item"><%= link_to "dashboard", "/" %></span>
-			<span class="menu_item"><%= link_to "list", verifications_path %></span>
-			<span class="menu_item"><%= link_to "import", "/import" %></span>
-			<span class="menu_item"><%= link_to "report", "/report" %></span>
-			<span class="menu_item"><%= link_to "patterns", "/patterns" %></span>
-			<span class="menu_item"><%= link_to "categorize", "/categorize" %></span>
-			</p>
-			<p id="user">
-	  <% if user_signed_in? %>
-	    Signed in as <%= current_user.email %>. Not you?&nbsp;&nbsp;&nbsp;
-	    <%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
-	  <% else %>
-	    <%= link_to "Sign up", new_user_registration_path %> or
-	    <%= link_to "Sign in", new_user_session_path %>
-	  <% end %>
-	</p>
-	</div>
-	<div style="clear:both"></div>
-
-    <% if flash[:notice] %>
-      <p class="notice"><%= flash[:notice].html_safe %></p>
-    <% end %>
-    <% if flash[:error] %>
-      <p class="error"><%= flash[:error].html_safe %></p>
-    <% end %>
-    <% if flash[:alert] %>
-      <p class="alert"><%= flash[:alert].html_safe %></p>
-    <% end %>-->
 
 <%= yield %>
 

@@ -1,32 +1,10 @@
 # encoding: UTF-8
 require "date"
 require "csv"
-=begin
-  Actions:
-  - index
-    List verifications. Accepts search parameters
-  - show
-    Show one verification. Not really required, use edit instead?
-  - new
-    Show a form to create a single new verification
-  - edit
-    Show a form to edit a single verification (only category?)
-  - create
-    Create a new verification then redirect to index
-  - update
-    Update a single verification then redirect to index
-  - destroy
-    Delete a single verification then redirect to index
-  - import
-    [No post] Show a form to import several new verifications
-    [post] Create several new verificiations then redirect to index
-  - report
-    Show a tabular aggregation of verifications (category vs month). Accepts year as input.
-=end
+
 class VerificationsController < ApplicationController
   before_filter :authenticate_user!
   
-  # GET /verifications
   # GET /verifications.json
   def index
     # Setup default values (LastYear)
@@ -77,19 +55,16 @@ class VerificationsController < ApplicationController
     @cu = current_user
     
     respond_to do |format|
-      format.html # index.html.erb
       format.json { render json: @verifications }
       format.csv { render csv: @verifications }
     end
   end
 
-  # GET /verifications/1
   # GET /verifications/1.json
   def show
     @verification = current_user.verifications.find(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
       format.json { render json: @verification }
     end
   end
@@ -124,9 +99,9 @@ class VerificationsController < ApplicationController
       end
       respond_to do |format|
         if @errors.length > 0
-          format.html { render action: "import" }
+          format.json { render json: :ok, status: :created }
         else
-          format.html { redirect_to action: "index" }
+          format.json { render json: :error, status: :unprocessable_entity }
         end        
       end
     else
@@ -134,23 +109,6 @@ class VerificationsController < ApplicationController
     end
   end
 
-  # GET /verifications/new
-  # GET /verifications/new.json
-  def new
-    @verification = current_user.verifications.create
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @verification }
-    end
-  end
-
-  # GET /verifications/1/edit
-  def edit
-    @verification = current_user.verifications.find(params[:id])
-  end
-
-  # POST /verifications
   # POST /verifications.json
   def create
       # Create a single verification
@@ -158,47 +116,37 @@ class VerificationsController < ApplicationController
   
       respond_to do |format|
         if @verification.save
-          format.html { redirect_to @verification, notice: 'Verification was successfully created.' }
           format.json { render json: @verification, status: :created, location: @verification }
         else
-          format.html { render action: "new" }
           format.json { render json: @verification.errors, status: :unprocessable_entity }
         end
       end
   end
 
-  # PUT /verifications/1
   # PUT /verifications/1.json
   def update
     @verification = current_user.verifications.find(params[:id])
-    logger.debug("Updating ver " + @verification.id.to_s)
     u = {}
     params.each do |p,v|
       if p=="category" || p=="pattern_id"
         u[p] = v
       end
     end
-    logger.debug("Updating ver - " + u.to_yaml)
     respond_to do |format|
       if @verification.update_attributes(u)
-        logger.debug("Updating ver " + @verification.id.to_s + " OK")
-        format.html { redirect_to @verification, notice: 'Verification was successfully updated.' }
         format.json { head :ok }
       else
-        format.html { render action: "edit" }
         format.json { render json: @verification.errors, status: :unprocessable_entity }
       end
     end
   end
 
-  # DELETE /verifications/1
   # DELETE /verifications/1.json
   def destroy
     @verification = current_user.verifications.find(params[:id])
     @verification.destroy
 
     respond_to do |format|
-      format.html { redirect_to verifications_url }
       format.json { head :ok }
     end
   end
@@ -209,6 +157,7 @@ class VerificationsController < ApplicationController
      COMMON_YEAR_DAYS_IN_MONTH[month]
   end
 
+  # GET /pivot
   def pivot
     # Setup default values (LastYear)
     pivot_on = :month # month or day
@@ -274,22 +223,5 @@ class VerificationsController < ApplicationController
       format.json { render :json => @report.toJSON() }
     end
   end    
-  
-  def report
-    @years = current_user.verifications.sum(:amount, :group => 'year', :order => 'year DESC').keys
-    @year = params[:year] 
-    @year ||= @years.length > 0 ? @years.max.to_s : Date.today.year
-    @report = PivotTable::PivotTable.new
-    last_month = @year.to_s == Date.today.year.to_s ? Date.today.month : 12
-    (1..last_month).each do |month|
-      @report.add_column(month, current_user.verifications.sum(:amount, :conditions => "month=#{month} and year=#{@year}", :group => 'category'))
-    end
-    @report.sort_rows!
-
-    respond_to do |format|
-      format.html { render action: "report" }
-      format.json { head :ok }
-    end
-  end
   
 end
