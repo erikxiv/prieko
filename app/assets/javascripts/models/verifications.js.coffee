@@ -53,13 +53,13 @@ window.eco.collections.verifications = Backbone.Collection.extend({
 					console.log("Trying to match " + sebhash["description"])
 					# Match existing pattern
 					p = window.eco.state.patterns.find((p) -> p.get("pattern")==sebhash["description"])
-					console.log("p " + p)
+					#console.log("p " + p)
 					if p
 						sebhash["category"] = p.get("category")
 						sebhash["pattern_id"] = p.id
-						console.log("Found match! " + p.id + "/" + p.get("pattern"))
+						#console.log("Found match! " + p.id + "/" + p.get("pattern"))
 				vdate = new Date(sebhash["verification_date"])
-				sebhash["month"] = vdate.getMonth()
+				sebhash["month"] = vdate.getMonth() + 1 # getMonth returns 0 for January
 				sebhash["year"] = vdate.getFullYear()
 				vs.push(sebhash)
 		this.reset(vs)

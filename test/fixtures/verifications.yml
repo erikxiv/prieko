@@ -48,3 +48,16 @@ no_categorization:
     year: 2012
     month: 01
 
+<% (0..364).each do |n| 
+  d = n.days.ago %>
+d<%= n.to_s %>:
+    raw: MyString
+    bank: MyString
+    verification_id: MyString
+    verification_date: <%= d.strftime("%Y-%m-%d") %>
+    amount: 1
+    description: DescriptionDull
+    user: dull
+    year: <%= d.year.to_s %>
+    month: <%= d.month.to_s %>
+<% end %>

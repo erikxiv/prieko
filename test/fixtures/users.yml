@@ -11,3 +11,7 @@ two:
 lonely:
   email: lonely@mail.com
   password: pass3
+
+dull:
+  email: dull@mail.com
+  password: pass4
