@@ -8,6 +8,8 @@ window.eco.models.daterange = Backbone.Model.extend({
 			{id: "LastMonth", label: "Last Month", "filter-name":"DateRange,Year,Month", "filter-value":"LastMonth"}
 		]
 		years : [
+			{id: "2014", label: "2014", "filter-name":"Year,DateRange", "filter-value":"2014"},
+			{id: "2013", label: "2013", "filter-name":"Year,DateRange", "filter-value":"2013"},
 			{id: "2012", label: "2012", "filter-name":"Year,DateRange", "filter-value":"2012"},
 			{id: "2011", label: "2011", "filter-name":"Year,DateRange", "filter-value":"2011"},
 			{id: "2010", label: "2010", "filter-name":"Year,DateRange", "filter-value":"2010"},
